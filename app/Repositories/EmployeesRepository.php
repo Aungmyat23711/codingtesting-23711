@@ -13,6 +13,14 @@ class EmployeesRepository implements EmployeeInterface
     {
         $employee->headers->set('Content-Type', 'application/json');
         try {
+            if (!is_string($employee->photo)) {
+                $file = $employee->photo;
+                $ext = $file->getClientOriginalExtension();
+                $photo = time() . '.' . $ext;
+                $path = $file->move('images/', $photo);
+            } else {
+                $photo = $employee->photo;
+            }
             $data = new Employee;
             $data->name = $employee->name;
             $data->email = $employee->email;
@@ -20,7 +28,7 @@ class EmployeesRepository implements EmployeeInterface
             $data->address = $employee->address;
             $data->dob = $employee->dob;
             $data->position_id = $employee->position_id;
-            $data->photo = $employee->photo;
+            $data->photo = $photo;
             $data->save();
 
             foreach ($employee->educations as $edu) {
